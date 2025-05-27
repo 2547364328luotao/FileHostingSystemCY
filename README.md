@@ -40,6 +40,10 @@ web/
 
 ![数据库ER图](https://raw.githubusercontent.com/2547364328luotao/FileHostingSystemCY/d5a7f4ba8757d54e575680a1dc101d78763077bc/web/image/ER%E5%9B%BE.drawio.svg)
 
+#### 项目数据流顶层图
+
+![项目数据流顶层图](https://raw.githubusercontent.com/2547364328luotao/FileHostingSystemCY/f74959085c0a5217c9f22496730ce1a70f5fe9fc/web/image/%E6%95%B0%E6%8D%AE%E6%B5%81%E5%9B%BE-Page-1.drawio.svg)
+
 
 #### 1. 目录结构与模块划分
 
