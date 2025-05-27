@@ -36,6 +36,11 @@ web/
 
 ### 详细项目构成说明 🏗️
 
+#### 数据库ER图
+
+![数据库ER图](https://github.com/2547364328luotao/FileHostingSystemCY/blob/main/web/image/ER%E5%9B%BE.drawio.png?raw=true)
+
+
 #### 1. 目录结构与模块划分
 
 - `src/main/java/`
