@@ -43,6 +43,8 @@ web/
 #### 项目数据流顶层图
 
 ![项目数据流顶层图](https://raw.githubusercontent.com/2547364328luotao/FileHostingSystemCY/f74959085c0a5217c9f22496730ce1a70f5fe9fc/web/image/%E6%95%B0%E6%8D%AE%E6%B5%81%E5%9B%BE-Page-1.drawio.svg)
+![项目数据流顶层图](https://raw.githubusercontent.com/2547364328luotao/FileHostingSystemCY/729adea80d08c1d5bbc0d137949c203d72b50b18/web/image/%E6%95%B0%E6%8D%AE%E6%B5%81%E5%9B%BE-%E7%AC%AC%202%20%E9%A1%B5.drawio.svg)
+
 
 
 #### 1. 目录结构与模块划分
