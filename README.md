@@ -1,5 +1,7 @@
 # FileHostingSystem - 基于Alist的文件托管系统 🚀
 
+> 武汉城市学院2025上半年Web课程设计 🎓
+
 ## 项目简介 📝
 
 这是一个基于Alist的文件托管系统，提供文件上传、存储和管理功能。系统使用Java Servlet技术构建，集成了Alist作为底层存储服务。
