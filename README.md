@@ -34,6 +34,94 @@ web/
 └── upload.jsp        # 上传页面
 ```
 
+### 详细项目构成说明 🏗️
+
+#### 1. 目录结构与模块划分
+
+- `src/main/java/`
+  - `controller/`：包含所有Servlet控制器类，负责处理前端请求、文件上传、文件列表刷新等核心业务流程。
+  - `db/`：数据库操作相关类，如`DBUtil`，提供数据库连接池、SQL执行、事务管理等功能。
+  - `filter/`：过滤器相关类，用于权限校验、请求拦截等。
+  - `model/`：数据模型类，定义文件、用户等实体的数据结构。
+  - `service/`：业务逻辑层，封装如文件同步、用户管理等核心服务。
+  - `utils/`：工具类集合，包括Alist API对接、Token管理、文件上传、数据库同步等。
+    - `AlistToken.java`：实现Alist登录与Token获取。
+    - `AlistlistFiles.java`：封装Alist文件列表API，支持目录内容获取与解析。
+    - `AlistUploader.java`：实现文件上传到Alist存储，支持大文件分片、进度回调。
+    - `AlistDatabaseRefresher.java`：负责Alist与本地数据库的数据同步，自动识别文件类型并批量写入。
+    - `AlistRefresher.java`：用于强制刷新Alist目录缓存，确保数据实时性。
+    - `MainTest.java`、`AlistlistFilesTest.java`：测试与演示主类，便于开发调试。
+
+- `src/main/resources/`
+  - `db.properties`：数据库连接配置文件。
+
+- `web/`
+  - `WEB-INF/`：Web应用配置与依赖库目录。
+    - `web.xml`：Servlet与过滤器等Web应用配置。
+    - `lib/`：第三方依赖库（如Jackson、OkHttp等）。
+  - `index.jsp`：文件管理主页面，展示文件列表、支持搜索与筛选。
+  - `upload.jsp`：文件上传页面，支持拖拽上传、进度显示、类型预览，前端交互体验友好。
+
+#### 2. Builder 相关说明
+
+本项目采用Builder设计思想进行部分对象的构建与初始化，提升代码可读性与扩展性。例如：
+- 文件信息（FileInfo）对象通过setter链式调用快速构建。
+- 数据库操作、Alist API调用等均采用分层解耦，便于后续扩展和维护。
+
+#### 3. 主要流程说明
+
+- 用户通过`upload.jsp`上传文件，`UploadServlet`接收并保存至服务器临时目录。
+- 后端调用`AlistUploader`上传文件到Alist云存储。
+- 上传完成后，`AlistRefresher`刷新Alist目录，`AlistlistFiles`获取最新文件列表。
+- `AlistDatabaseRefresher`将Alist文件信息同步到本地数据库，自动识别文件类型。
+- 前端页面实时展示上传进度与结果，支持预览和下载。
+
+---
+
+### 核心类说明 📚
+
+#### 1. 工具类（utils）
+
+- **AlistToken** 🔑
+  - 处理Alist系统的身份认证
+  - 实现登录获取token的功能
+  - 支持token的自动刷新和管理
+
+- **AlistlistFiles** 📋
+  - 实现与Alist API的通信
+  - 获取文件列表和目录结构
+  - 支持文件信息的解析和封装
+
+- **AlistUploader** ⬆️
+  - 处理文件上传到Alist存储
+  - 支持大文件分片上传
+  - 提供上传进度回调
+
+- **AlistDatabaseRefresher** 🔄
+  - 同步Alist文件系统与本地数据库
+  - 实现文件类型自动识别
+  - 维护文件元数据
+
+#### 2. 数据库（db）
+
+- **DBUtil** 🗃️
+  - 数据库连接池管理
+  - 提供统一的数据库操作接口
+  - 支持事务管理
+
+#### 3. Web界面
+
+- **upload.jsp** 📤
+  - 现代化的文件上传界面
+  - 支持拖拽上传
+  - 实时显示上传进度
+  - 文件类型预览
+
+- **index.jsp** 🏠
+  - 文件管理主界面
+  - 文件列表展示
+  - 支持文件搜索和筛选
+
 ## 核心功能 ⭐
 
 ### 1. Alist集成 🔗
