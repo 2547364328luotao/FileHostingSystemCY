@@ -38,7 +38,7 @@ web/
 
 #### 数据库ER图
 
-![数据库ER图](https://github.com/2547364328luotao/FileHostingSystemCY/blob/main/web/image/ER%E5%9B%BE.drawio.png?raw=true)
+![数据库ER图](https://raw.githubusercontent.com/2547364328luotao/FileHostingSystemCY/d5a7f4ba8757d54e575680a1dc101d78763077bc/web/image/ER%E5%9B%BE.drawio.svg)
 
 
 #### 1. 目录结构与模块划分
