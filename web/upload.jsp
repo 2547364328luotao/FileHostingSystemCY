@@ -1,347 +1,487 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alist 云存储上传</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <!-- 基本页面信息设置 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AlistFHS Cloud SU - 文件上传">
+  <meta name="author" content="Webpixels">
+  <title>文件上传 - AlistFHS Cloud SU</title>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+  <!-- 引入Google字体 - Nunito和Roboto字体系列 -->
+  <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700,800|Roboto:400,500,700" rel="stylesheet">
 
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 600px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
+  <!-- 引入动画库 -->
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/vendor/animate/animate.min.css" type="text/css">
 
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+  <!-- Boomerang UI Kit 主题样式文件 -->
+  <link type="text/css" href="${pageContext.request.contextPath}/assets/css/theme.css" rel="stylesheet">
 
-        .header h1 {
-            color: #333;
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+  <!-- 演示样式文件 - 实际项目中可以不使用 -->
+  <link type="text/css" href="${pageContext.request.contextPath}/assets/css/demo.css" rel="stylesheet">
 
-        .header p {
-            color: #666;
-            font-size: 16px;
-        }
+  <style>
+    /* 自定义样式 */
+    .spotlight {
+      min-height: 100vh;
+    }    /* 透明导航栏样式 */
+    .navbar-transparent {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.1) !important;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
 
-        .upload-section {
-            margin-bottom: 30px;
-            padding: 30px;
-            border: 2px dashed #e1e5e9;
-            border-radius: 16px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
+    /* 上传区域样式 */
+    .upload-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-top: 120px;
+    }
 
-        .upload-section:hover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.05);
-        }
+    .upload-section {
+      margin-bottom: 30px;
+      padding: 40px;
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.1);
+    }
 
-        .upload-section.dragover {
-            border-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
-            transform: scale(1.02);
-        }
+    .upload-section:hover {
+      border-color: rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
 
-        .upload-section.uploading {
-            pointer-events: none;
-            opacity: 0.7;
-        }
+    .upload-section.dragover {
+      border-color: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.02);
+    }
 
-        .upload-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-            display: block;
-            text-align: center;
-        }
+    .upload-section.uploading {
+      pointer-events: none;
+      opacity: 0.7;
+    }
 
-        .upload-section h3 {
-            color: #333;
-            font-size: 20px;
-            margin-bottom: 8px;
-            text-align: center;
-        }
+    .upload-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      display: block;
+      text-align: center;
+      color: white;
+    }
 
-        .upload-section p {
-            color: #666;
-            font-size: 14px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    .upload-section h3 {
+      color: white;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      text-align: center;
+    }
 
-        .file-input-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
+    .upload-section p {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
 
-        .file-input {
-            opacity: 0;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
+    .file-input-wrapper {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
 
-        .file-input-button {
-            display: block;
-            width: 100%;
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
+    .file-input {
+      opacity: 0;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
 
-        .file-input-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
+    .file-input-button {
+      display: block;
+      width: 100%;
+      padding: 16px 32px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
 
-        .upload-button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 15px;
-            transition: all 0.3s ease;
-            opacity: 0.7;
-            pointer-events: none;
-        }
+    .file-input-button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
 
-        .upload-button:enabled {
-            opacity: 1;
-            pointer-events: auto;
-        }
+    .upload-button {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+      opacity: 0.7;
+      pointer-events: none;
+      box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+    }
 
-        .upload-button:enabled:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
-        }
+    .upload-button:enabled {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
-        .upload-button.uploading {
-            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
-            cursor: not-allowed;
-        }
+    .upload-button:enabled:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(40, 167, 69, 0.4);
+    }
 
-        .file-info {
-            margin-top: 15px;
-            padding: 12px;
-            background: rgba(102, 126, 234, 0.1);
-            border-radius: 8px;
-            font-size: 14px;
-            color: #333;
-            display: none;
-        }
+    .upload-button.uploading {
+      background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+      cursor: not-allowed;
+    }
 
-        .progress-container {
-            margin-top: 15px;
-            display: none;
-        }
+    .file-info {
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      font-size: 15px;
+      color: white;
+      display: none;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
 
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e1e5e9;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 8px;
-        }
+    .progress-container {
+      margin-top: 20px;
+      display: none;
+    }
 
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #45a049);
-            width: 0%;
-            transition: width 0.3s ease;
-            border-radius: 4px;
-        }
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      backdrop-filter: blur(10px);
+    }
 
-        .progress-text {
-            font-size: 12px;
-            color: #666;
-            text-align: center;
-        }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #28a745, #20c997);
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+    }
 
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 14px;
-            display: none;
-            position: relative;
-        }
+    .progress-text {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
+      text-align: center;
+      font-weight: 500;
+    }
 
-        .result.success {
-            background: rgba(76, 175, 80, 0.1);
-            color: #2e7d32;
-            border: 1px solid rgba(76, 175, 80, 0.2);
-        }
+    .result {
+      margin-top: 25px;
+      padding: 20px;
+      border-radius: 16px;
+      font-size: 15px;
+      display: none;
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
 
-        .result.error {
-            background: rgba(244, 67, 54, 0.1);
-            color: #c62828;
-            border: 1px solid rgba(244, 67, 54, 0.2);
-        }
+    .result.success {
+      background: rgba(40, 167, 69, 0.2);
+      color: #d4edda;
+      border: 1px solid rgba(40, 167, 69, 0.3);
+    }
 
-        .copy-button {
-            background: rgba(102, 126, 234, 0.1);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            color: #667eea;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            margin-left: 8px;
-            transition: all 0.2s ease;
-        }
+    .result.error {
+      background: rgba(220, 53, 69, 0.2);
+      color: #f8d7da;
+      border: 1px solid rgba(220, 53, 69, 0.3);
+    }
 
-        .copy-button:hover {
-            background: rgba(102, 126, 234, 0.2);
-        }
+    .copy-button {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      margin-left: 12px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
 
-        .file-preview {
-            margin-top: 15px;
-            text-align: center;
-            display: none;
-        }
+    .copy-button:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
 
-        .file-preview img {
-            max-width: 100%;
-            max-height: 200px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+    .file-preview {
+      margin-top: 20px;
+      text-align: center;
+      display: none;
+    }
 
-        .file-preview video {
-            max-width: 100%;
-            max-height: 200px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+    .file-preview img {
+      max-width: 100%;
+      max-height: 250px;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
 
-        .loading-spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 8px;
-        }
+    .file-preview video {
+      max-width: 100%;
+      max-height: 250px;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+    .loading-spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      margin-right: 10px;
+    }
 
-        .status-steps {
-            margin-top: 15px;
-            font-size: 12px;
-            color: #666;
-            line-height: 1.5;
-            display: none;
-        }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
-        .step {
-            margin-bottom: 4px;
-        }
+    .status-steps {
+      margin-top: 20px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+      display: none;
+    }
 
-        .step.completed {
-            color: #4CAF50;
-        }
+    .step {
+      margin-bottom: 8px;
+      padding: 4px 0;
+    }
 
-        .step.current {
-            color: #667eea;
-            font-weight: 600;
-        }
+    .step.completed {
+      color: #d4edda;
+    }
 
-        @media (max-width: 600px) {
-            .container {
-                margin: 20px;
-                padding: 30px 20px;
-            }
+    .step.current {
+      color: white;
+      font-weight: 600;
+    }
 
-            .header h1 {
-                font-size: 24px;
-            }
-        }
+    @media (max-width: 600px) {
+      .upload-container {
+        padding: 15px;
+        margin: 15px;
+      }
 
-        #storage-info {
-            position: fixed;      /* 固定定位，方便从顶部滑入 */
-            top: -50px;           /* 初始位置：在视口顶部外面 */
-            left: 50%;            /* 水平居中 */
-            transform: translateX(-50%);
-            background-color: #f0f0f0; /* 可以根据需要调整背景色 */
-            padding: 10px 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            font-weight: bold;
-            animation: slideDown 0.7s ease forwards;
-            /* forwards 保持动画结束时的状态 */
-        }
+      .upload-section {
+        padding: 30px 20px;
+      }
 
-        @keyframes slideDown {
-            0% {
-                top: -50px;
-                opacity: 0;
-            }
-            100% {
-                top: 20px;   /* 最终位置离顶部20px */
-                opacity: 1;
-            }
-        }
+      .upload-section h2 {
+        font-size: 28px;
+        margin-bottom: 15px;
+      }
+
+      .upload-section p {
+        font-size: 16px;
+        margin-bottom: 25px;
+      }
+
+      .file-input-button, .upload-button {
+        padding: 14px 24px;
+        font-size: 16px;
+        margin: 8px 0;
+      }
+
+      .file-info, .result {
+        padding: 15px;
+        font-size: 14px;
+      }
+
+      .copy-button {
+        padding: 6px 12px;
+        font-size: 12px;
+        margin-left: 8px;
+      }
+    }
+
+    #storage-info {
+      position: fixed;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px 25px;
+      border-radius: 25px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      font-weight: 600;
+      color: white;
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: slideDown 0.8s ease forwards;
+      font-size: 14px;
+      z-index: 1000;
+    }
+
+    @keyframes slideDown {
+      0% {
+        top: -60px;
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+      }
+      100% {
+        top: 25px;
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
 
     </style>
 </head>
 <body>
 <div id="storage-info">正在加载存储信息...</div>
-<div class="container">
-    <div class="header">
-        <h1>Alist 云存储</h1>
-        <p>支持图片和视频文件上传到云端存储</p>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-transparent fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="index.jsp">
+            <img src="assets/img/brand/light.svg" alt="Boomerang" id="navbar-logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-primary" aria-controls="navbar-primary" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar-primary">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.jsp">Overview</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbar-primary_dropdown_1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Pages</a>
+                    <div class="dropdown-menu" aria-labelledby="navbar-primary_dropdown_1">
+                        <a class="dropdown-item" href="index.jsp">Homepage</a>
+                        <a class="dropdown-item" href="about.jsp">About us</a>
+                        <a class="dropdown-item" href="signin.jsp">Sign in</a>
+                        <a class="dropdown-item" href="contact.jsp">Contact</a>
+                        <a class="dropdown-item" href="upload.jsp">Upload</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Docs</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav align-items-lg-center ml-lg-auto">
+                <li class="nav-item">
+                    <a class="nav-link nav-link-icon" href="#">
+                        <i class="fab fa-facebook-square"></i>
+                        <span class="nav-link-inner--text d-lg-none">Facebook</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-icon" href="#">
+                        <i class="fab fa-instagram"></i>
+                        <span class="nav-link-inner--text d-lg-none">Instagram</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-icon" href="#">
+                        <i class="fab fa-twitter-square"></i>
+                        <span class="nav-link-inner--text d-lg-none">Twitter</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-icon" href="#">
+                        <i class="fab fa-github-square"></i>
+                        <span class="nav-link-inner--text d-lg-none">Github</span>
+                    </a>
+                </li>
+                <li class="nav-item ml-lg-4">
+                    <a href="signin.jsp" class="btn btn-neutral btn-icon">
+                        <span class="btn-inner--icon">
+                            <i class="fas fa-user mr-2"></i>
+                        </span>
+                        <span class="nav-link-inner--text">Login</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
+</nav>
+
+<!-- Main content -->
+<div class="main-content">
+    <section class="section section-lg section-hero section-shaped">
+        <div class="shape shape-style-1 shape-primary">
+            <span class="span-150"></span>
+            <span class="span-50"></span>
+            <span class="span-50"></span>
+            <span class="span-75"></span>
+            <span class="span-100"></span>
+            <span class="span-75"></span>
+            <span class="span-50"></span>
+            <span class="span-100"></span>
+            <span class="span-50"></span>
+            <span class="span-100"></span>
+        </div>
+        <div class="container shape-container d-flex align-items-center py-lg">
+            <div class="col px-0">
+                <div class="row align-items-center justify-content-center">
+                    <div class="col-lg-8 text-center">
+                        <img src="assets/img/brand/white.svg" style="width: 200px;" class="img-fluid">
+                        <h1 class="text-white display-1 font-weight-bold">文件上传</h1>
+                        <h2 class="display-4 font-weight-normal text-white">支持图片和视频文件上传到云端存储</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<div class="upload-container">
 
     <form id="uploadForm" enctype="multipart/form-data">
         <div class="upload-section" id="uploadSection">
@@ -650,5 +790,17 @@
         progressFill.style.width = '0%';
     }
 </script>
+
+<!-- Core -->
+<script src="assets/vendor/jquery/jquery.min.js"></script>
+<script src="assets/vendor/popper/popper.min.js"></script>
+<script src="assets/vendor/bootstrap/bootstrap.min.js"></script>
+<script src="assets/vendor/headroom/headroom.min.js"></script>
+<!-- Optional JS -->
+<script src="assets/vendor/onscreen/onscreen.min.js"></script>
+<script src="assets/vendor/nouislider/js/nouislider.min.js"></script>
+<script src="assets/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<!-- Argon JS -->
+<script src="assets/js/argon.js?v=1.0.1"></script>
 </body>
 </html>

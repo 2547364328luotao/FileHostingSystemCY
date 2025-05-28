@@ -20,12 +20,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="lib" level="project" />
-    <orderEntry type="library" name="jackson-annotations-2.15.2" level="project" />
-    <orderEntry type="library" name="jackson-core-2.15.2" level="project" />
-    <orderEntry type="library" name="jackson-databind-2.15.2" level="project" />
-    <orderEntry type="library" name="okhttp-4.12.0" level="project" />
-    <orderEntry type="library" name="kotlin-stdlib-1.8.22" level="project" />
-    <orderEntry type="library" name="okio-3.9.0" level="project" />
-    <orderEntry type="library" name="okhttp-4.12.0 (2)" level="project" />
+    <orderEntry type="library" name="lib (2)" level="project" />
   </component>
 </module>
